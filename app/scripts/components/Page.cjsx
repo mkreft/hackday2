@@ -5,12 +5,12 @@ Page = React.createClass(
   getInitialState: ->
 
     lessondict =
-      3: 200
-      6: 400
-      9: 6000
-      12: 8000
-      15: 10000
-      18: 12000
+      3: 150
+      6: 300
+      9: 600
+      12: 850
+      15: 1200
+      18: 1400
     
     @.initTimer()
     interval = 0
@@ -18,9 +18,11 @@ Page = React.createClass(
     treshold = 0
     capacity = 40
     days = 0
+    lastday = 0
     hours = 0
     xp = 0
     xp = xp
+    output = "welcome, NEO"
     page = PageStore.getPageFromKey(@props.page or "/")
     page : page
     lesson : lesson
@@ -30,35 +32,64 @@ Page = React.createClass(
     days : days
     hours : hours
     treshold : treshold
+    output : output
+    lastday : lastday
 
   initTimer:->
-    setInterval(@.updateTick,500)
+    setInterval(@.updateTick,300)
+    setInterval(@.moveBar,300)
+  moveBar:()->
 
+    $('.progress-wrap').data('progress-percent', @state.capacity*2.5)
+    moveProgressBar()
+    if @state.capacity >= 15 and @canMakeLesson()
+      @enableLessonBtn()
   lowerCapacity:(val)->
     if @state.capacity >= val and @canMakeLesson()
       @setState({capacity : @state.capacity-val})
+      @moveBar()
       @addPoints(Math.floor(Math.random()*100))
       @addLesson()
+      @makeoutput('well done')
     else
       if @canMakeLesson()
-        console.log('take a rest dude!')
+        @disableLessonBtn()
+        @makeoutput('take a rest dude!')
   canMakeLesson:->
     @checktreshold()
+
+  enableLessonBtn:->
+    $('#lessonbtn').removeClass('disabled');
+    $('#lessonbtn').attr("disabled", false);
+
+
+  disableLessonBtn:->
+    $('#lessonbtn').addClass('disabled');
+    $('#lessonbtn').attr("disabled", true);
   
   addPoints:(num)->
     @setState({xp: @state.xp+num})
+    @setState({lastday: @state.days})
+    #check last day you added points
+
+
+  makeoutput:(out)->
+    @setState({output : out})
+
 
   checktreshold:()->
-    console.log('@state.xp ' +@state.xp+ ' >? ' + @state.treshold)
+    #@makeoutput('@state.xp ' +@state.xp+ ' >? ' + @state.treshold)
     if @state.lessondict[@state.lesson]
       @state.treshold = @state.lessondict[@state.lesson]
     if (@state.xp >= @state.treshold) 
       return yes
-    console.log('lesson locked: train dude!')
+    @makeoutput('lesson locked: train dude! You need ' +  @state.treshold + " points")
+    @disableLessonBtn()
+    #@makeoutput('lesson locked: train dude!')
     return no
     
   addLesson:->
-    #console.log(@state.lessondict[@state.lesson])
+    #@makeoutput(@state.lessondict[@state.lesson])
     @setState({lesson : @state.lesson+1})
 
   acomplishLesson:->
@@ -73,26 +104,36 @@ Page = React.createClass(
     else
       @setState({days : @state.days+1})
       @setState({hours : 0})
+      if @state.days-@state.lastday > 1
+        @makeoutput("You're #{@state.days-@state.lastday} day away. Please, come back!")
 
 
   updateTick:->
     @addHour()
-    #console.log("tick")
+    #@makeoutput("tick")
     if @state.capacity < 40
       @setState({capacity : @state.capacity+1})
+
 
 # Buttons
 
   lessonControl: ->
-    <button onClick={@acomplishLesson}>
-      make Lesson {@state.lesson}
+    <button className="myButton" id="lessonbtn" onClick={@acomplishLesson}>
+      do Lesson {@state.lesson}
     </button>
+
+
+
 
   trainerControl: ->
     <p>test</p>
-    <button onClick={@acomplishTraining}>
-      use trainer
+    <button className="myButton" onClick={@acomplishTraining}>
+      review learned stuff
     </button>
+
+  # progressbar:->
+  #   <div class="progress progress-bar"/></div>
+  #   <div id="my-progressbar">
 
   render: ->
     page = @state.page
@@ -100,19 +141,24 @@ Page = React.createClass(
     xp = @state.xp
     days = @state.days
     hours = @state.hours
+    output = @state.output
     <div id="pagebody">
-      
+      <img id="logo" src={page.logo} />
+      <img id="logo2" src={page.logo2} />
         <h1>{page.name}</h1>
-        <img src={page.logo} />
-        <p>{days} days {hours} hours</p>
-        <div>capacity: {capacity}</div>
+        
+        <h2>{days} days {hours} hours</h2>
+        <div className="progress-wrap progress" data-progress-percent={capacity*2.5}><div className="progress progress-bar"/></div>
+        <h2>points : {xp}</h2>
         {@.lessonControl()}
-        <p>Points : {xp}</p>
         {@.trainerControl()}
+
+        <div id="userconsole">
+          {output}
+        </div>
       
 
     </div>
 )
 
 module.exports = Page
- 

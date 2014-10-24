@@ -1,8 +1,9 @@
 _pages = "/":
   key: "/"
-  name: "Hello World"
+  name: "Learn Behavior Guide"
   link: "http://facebook.github.io/react"
-  logo: "images/react.png"
+  logo: "images/Babbel_logo.png"
+  logo2: "images/react.png"
 
 PageStore =
   getPageFromKey: (key) ->

@@ -121,14 +121,14 @@ PageStore = require("../stores/PageStore");
 
 Page = React.createClass({
   getInitialState: function() {
-    var capacity, days, hours, interval, lesson, lessondict, page, treshold, xp;
+    var capacity, days, hours, interval, lastday, lesson, lessondict, output, page, treshold, xp;
     lessondict = {
-      3: 200,
-      6: 400,
-      9: 6000,
-      12: 8000,
-      15: 10000,
-      18: 12000
+      3: 150,
+      6: 300,
+      9: 600,
+      12: 850,
+      15: 1200,
+      18: 1400
     };
     this.initTimer();
     interval = 0;
@@ -136,9 +136,11 @@ Page = React.createClass({
     treshold = 0;
     capacity = 40;
     days = 0;
+    lastday = 0;
     hours = 0;
     xp = 0;
     xp = xp;
+    output = "welcome, NEO";
     page = PageStore.getPageFromKey(this.props.page || "/");
     return {
       page: page,
@@ -148,42 +150,71 @@ Page = React.createClass({
       xp: xp,
       days: days,
       hours: hours,
-      treshold: treshold
+      treshold: treshold,
+      output: output,
+      lastday: lastday
     };
   },
   initTimer: function() {
-    return setInterval(this.updateTick, 500);
+    setInterval(this.updateTick, 300);
+    return setInterval(this.moveBar, 300);
+  },
+  moveBar: function() {
+    $('.progress-wrap').data('progress-percent', this.state.capacity * 2.5);
+    moveProgressBar();
+    if (this.state.capacity >= 15 && this.canMakeLesson()) {
+      return this.enableLessonBtn();
+    }
   },
   lowerCapacity: function(val) {
     if (this.state.capacity >= val && this.canMakeLesson()) {
       this.setState({
         capacity: this.state.capacity - val
       });
+      this.moveBar();
       this.addPoints(Math.floor(Math.random() * 100));
-      return this.addLesson();
+      this.addLesson();
+      return this.makeoutput('well done');
     } else {
       if (this.canMakeLesson()) {
-        return console.log('take a rest dude!');
+        this.disableLessonBtn();
+        return this.makeoutput('take a rest dude!');
       }
     }
   },
   canMakeLesson: function() {
     return this.checktreshold();
   },
+  enableLessonBtn: function() {
+    $('#lessonbtn').removeClass('disabled');
+    return $('#lessonbtn').attr("disabled", false);
+  },
+  disableLessonBtn: function() {
+    $('#lessonbtn').addClass('disabled');
+    return $('#lessonbtn').attr("disabled", true);
+  },
   addPoints: function(num) {
-    return this.setState({
+    this.setState({
       xp: this.state.xp + num
+    });
+    return this.setState({
+      lastday: this.state.days
+    });
+  },
+  makeoutput: function(out) {
+    return this.setState({
+      output: out
     });
   },
   checktreshold: function() {
-    console.log('@state.xp ' + this.state.xp + ' >? ' + this.state.treshold);
     if (this.state.lessondict[this.state.lesson]) {
       this.state.treshold = this.state.lessondict[this.state.lesson];
     }
     if (this.state.xp >= this.state.treshold) {
       return true;
     }
-    console.log('lesson locked: train dude!');
+    this.makeoutput('lesson locked: train dude! You need ' + this.state.treshold + " points");
+    this.disableLessonBtn();
     return false;
   },
   addLesson: function() {
@@ -206,9 +237,12 @@ Page = React.createClass({
       this.setState({
         days: this.state.days + 1
       });
-      return this.setState({
+      this.setState({
         hours: 0
       });
+      if (this.state.days - this.state.lastday > 1) {
+        return this.makeoutput("You're " + (this.state.days - this.state.lastday) + " day away. Please, come back!");
+      }
     }
   },
   updateTick: function() {
@@ -221,27 +255,42 @@ Page = React.createClass({
   },
   lessonControl: function() {
     return React.DOM.button({
+      "className": "myButton",
+      "id": "lessonbtn",
       "onClick": this.acomplishLesson
-    }, "make Lesson ", this.state.lesson);
+    }, "do Lesson ", this.state.lesson);
   },
   trainerControl: function() {
     React.DOM.p(null, "test");
     return React.DOM.button({
+      "className": "myButton",
       "onClick": this.acomplishTraining
-    }, "use trainer");
+    }, "review learned stuff");
   },
   render: function() {
-    var capacity, days, hours, page, xp;
+    var capacity, days, hours, output, page, xp;
     page = this.state.page;
     capacity = this.state.capacity;
     xp = this.state.xp;
     days = this.state.days;
     hours = this.state.hours;
+    output = this.state.output;
     return React.DOM.div({
       "id": "pagebody"
-    }, React.DOM.h1(null, page.name), React.DOM.img({
+    }, React.DOM.img({
+      "id": "logo",
       "src": page.logo
-    }), React.DOM.p(null, days, " days ", hours, " hours"), React.DOM.div(null, "capacity: ", capacity), this.lessonControl(), React.DOM.p(null, "Points : ", xp), this.trainerControl());
+    }), React.DOM.img({
+      "id": "logo2",
+      "src": page.logo2
+    }), React.DOM.h1(null, page.name), React.DOM.h2(null, days, " days ", hours, " hours"), React.DOM.div({
+      "className": "progress-wrap progress",
+      "data-progress-percent": capacity * 2.5
+    }, React.DOM.div({
+      "className": "progress progress-bar"
+    })), React.DOM.h2(null, "points : ", xp), this.lessonControl(), this.trainerControl(), React.DOM.div({
+      "id": "userconsole"
+    }, output));
   }
 });
 
@@ -254,9 +303,10 @@ var PageStore, _pages;
 _pages = {
   "/": {
     key: "/",
-    name: "Hello World",
+    name: "Learn Behavior Guide",
     link: "http://facebook.github.io/react",
-    logo: "images/react.png"
+    logo: "images/Babbel_logo.png",
+    logo2: "images/react.png"
   }
 };
 

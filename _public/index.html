@@ -6,9 +6,32 @@
 		<link rel="stylesheet" type="text/css" href="/css/app.css">
 		<script src="/js/vendor.js"></script>
 		<script src="/js/app.js"></script>
+		<script src="http://code.jquery.com/jquery-2.1.1.min.js"></script>
+
 	</head>
 	<body>
 		<section id="app"></section>
 		<script>require('scripts/App');</script>
+		<script type="text/javascript">// on page load...
+    moveProgressBar();
+    // on browser resize...
+    $(window).resize(function() {
+        moveProgressBar();
+    });
+
+    // SIGNATURE PROGRESS
+    function moveProgressBar() {
+      console.log("moveProgressBar");
+        var getPercent = ($('.progress-wrap').data('progress-percent') / 100);
+        var getProgressWrapWidth = $('.progress-wrap').width();
+        var progressTotal = getPercent * getProgressWrapWidth;
+        var animationLength = 300;
+
+        // on page load, animate percentage bar to data percentage length
+        // .stop() used to prevent animation queueing
+        $('.progress-bar').stop().animate({
+            left: progressTotal
+        }, animationLength);
+    }</script>
 	</body>
 </html>
