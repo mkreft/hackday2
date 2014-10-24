@@ -1,0 +1,16 @@
+a {
+  text-align: center;
+  text-decoration: none;
+}
+a h1 {
+  font-family: sans-serif;
+  font-size: 60px;
+  color: #00d8ff;
+}
+img {
+  display: block;
+  margin: auto;
+}
+
+
+/*# sourceMappingURL=app.css.map*/

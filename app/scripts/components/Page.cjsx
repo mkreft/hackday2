@@ -10,7 +10,7 @@ Page = React.createClass(
     page = @state.page
     <div>
       <a href={page.link}>
-        <h1>{page.name}</h1>
+        <h1>{page.name} Hu</h1>
         <img src={page.logo} />
       </a>
     </div>
