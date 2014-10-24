@@ -5,38 +5,43 @@ Page = React.createClass(
   getInitialState: ->
     @.initTimer()
     interval = 0
-    seconds = 0
+    capacity = 0
     page = PageStore.getPageFromKey(@props.page or "/")
     page : page
-    seconds : seconds
+    capacity : capacity
 
   initTimer:->
-    setInterval(@.updateTick,1000)
+    setInterval(@.updateTick,100)
+
+  acomplishLesson:->
+    console.log('0')
+    @setState({capacity : 0})
 
   updateTick:->
     #console.log("tick")
-    @setState({seconds : @state.seconds+1})
+    if @state.capacity < 40
+      @setState({capacity : @state.capacity+1})
 
-  foo: ->
-    
-    <div>ff
-      <p>nice</p>
-    </div>
+  lessonControl: ->
+    <p>test</p>
+    <button onClick={@acomplishLesson}>
+      CLICK ME
+    </button>
 
   render: ->
     page = @state.page
-    seconds = @state.seconds
-    <div>
-      <a href={page.link}>
-        <h1>{page.name}</h1>
+    capacity = @state.capacity
+    <div id="pagebody">
+      
+        <h1>{page.name} </h1>
         <img src={page.logo} />
-        <div>Timer</div>
-        <p>{seconds}</p>
-        {@.foo()}
-
-      </a>
+        <div>capacity: {capacity}</div>
+        
+        {@.lessonControl()}
+      
 
     </div>
 )
 
 module.exports = Page
+ 

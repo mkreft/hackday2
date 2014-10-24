@@ -7,9 +7,21 @@ a h1 {
   font-size: 60px;
   color: #00d8ff;
 }
+#pagebody {
+  text-align: center;
+  text-decoration: none;
+}
+#pagebody h1 {
+  font-family: sans-serif;
+  font-size: 60px;
+  color: #00d8ff;
+}
 img {
   display: block;
   margin: auto;
+}
+button {
+  background-color: #ffffff;
 }
 
 

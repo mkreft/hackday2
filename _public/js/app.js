@@ -121,36 +121,47 @@ PageStore = require("../stores/PageStore");
 
 Page = React.createClass({
   getInitialState: function() {
-    var interval, page, seconds;
+    var capacity, interval, page;
     this.initTimer();
     interval = 0;
-    seconds = 0;
+    capacity = 0;
     page = PageStore.getPageFromKey(this.props.page || "/");
     return {
       page: page,
-      seconds: seconds
+      capacity: capacity
     };
   },
   initTimer: function() {
-    return setInterval(this.updateTick, 1000);
+    return setInterval(this.updateTick, 100);
   },
-  updateTick: function() {
+  acomplishLesson: function() {
+    console.log('0');
     return this.setState({
-      seconds: this.state.seconds + 1
+      capacity: 0
     });
   },
-  foo: function() {
-    return React.DOM.div(null, "ff", React.DOM.p(null, "nice"));
+  updateTick: function() {
+    if (this.state.capacity < 40) {
+      return this.setState({
+        capacity: this.state.capacity + 1
+      });
+    }
+  },
+  lessonControl: function() {
+    React.DOM.p(null, "test");
+    return React.DOM.button({
+      "onClick": this.acomplishLesson
+    }, "CLICK ME");
   },
   render: function() {
-    var page, seconds;
+    var capacity, page;
     page = this.state.page;
-    seconds = this.state.seconds;
-    return React.DOM.div(null, React.DOM.a({
-      "href": page.link
-    }, React.DOM.h1(null, page.name), React.DOM.img({
+    capacity = this.state.capacity;
+    return React.DOM.div({
+      "id": "pagebody"
+    }, React.DOM.h1(null, page.name, " "), React.DOM.img({
       "src": page.logo
-    }), React.DOM.div(null, "Timer"), React.DOM.p(null, seconds), this.foo()));
+    }), React.DOM.div(null, "capacity: ", capacity), this.lessonControl());
   }
 });
 
