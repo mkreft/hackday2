@@ -121,26 +121,71 @@ PageStore = require("../stores/PageStore");
 
 Page = React.createClass({
   getInitialState: function() {
-    var capacity, interval, page;
+    var capacity, days, hours, interval, lesson, page, xp;
     this.initTimer();
     interval = 0;
-    capacity = 0;
+    lesson = 1;
+    capacity = 40;
+    days = 0;
+    hours = 0;
+    xp = 0;
+    xp = xp;
     page = PageStore.getPageFromKey(this.props.page || "/");
     return {
       page: page,
-      capacity: capacity
+      lesson: lesson,
+      capacity: capacity,
+      xp: xp,
+      days: days,
+      hours: hours
     };
   },
   initTimer: function() {
-    return setInterval(this.updateTick, 100);
+    return setInterval(this.updateTick, 500);
   },
-  acomplishLesson: function() {
-    console.log('0');
+  lowerCapacity: function(val) {
+    if (this.state.capacity >= val) {
+      this.setState({
+        capacity: this.state.capacity - val
+      });
+      this.addLesson();
+      return this.addPoints(Math.floor(Math.random() * 100));
+    } else {
+      return console.log('take a rest dude!');
+    }
+  },
+  addPoints: function(num) {
     return this.setState({
-      capacity: 0
+      xp: this.state.xp + num
     });
   },
+  addLesson: function() {
+    return this.setState({
+      lesson: this.state.lesson + 1
+    });
+  },
+  acomplishLesson: function() {
+    return this.lowerCapacity(Math.floor(Math.random() * 20) + 10);
+  },
+  acomplishTraining: function() {
+    return this.addPoints(Math.floor(Math.random() * this.state.lesson * 2.3));
+  },
+  addHour: function() {
+    if (this.state.hours < 24) {
+      return this.setState({
+        hours: this.state.hours + 1
+      });
+    } else {
+      this.setState({
+        days: this.state.days + 1
+      });
+      return this.setState({
+        hours: 0
+      });
+    }
+  },
   updateTick: function() {
+    this.addHour();
     if (this.state.capacity < 40) {
       return this.setState({
         capacity: this.state.capacity + 1
@@ -151,17 +196,26 @@ Page = React.createClass({
     React.DOM.p(null, "test");
     return React.DOM.button({
       "onClick": this.acomplishLesson
-    }, "CLICK ME");
+    }, "make Lesson ", this.state.lesson);
+  },
+  trainerControl: function() {
+    React.DOM.p(null, "test");
+    return React.DOM.button({
+      "onClick": this.acomplishTraining
+    }, "Trainig");
   },
   render: function() {
-    var capacity, page;
+    var capacity, days, hours, page, xp;
     page = this.state.page;
     capacity = this.state.capacity;
+    xp = this.state.xp;
+    days = this.state.days;
+    hours = this.state.hours;
     return React.DOM.div({
       "id": "pagebody"
     }, React.DOM.h1(null, page.name, " "), React.DOM.img({
       "src": page.logo
-    }), React.DOM.div(null, "capacity: ", capacity), this.lessonControl());
+    }), React.DOM.p(null, days, " days ", hours, " hours"), React.DOM.div(null, "capacity: ", capacity), this.lessonControl(), React.DOM.p(null, "Points : ", xp), this.trainerControl());
   }
 });
 
