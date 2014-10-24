@@ -121,20 +121,36 @@ PageStore = require("../stores/PageStore");
 
 Page = React.createClass({
   getInitialState: function() {
-    var page;
+    var interval, page, seconds;
+    this.initTimer();
+    interval = 0;
+    seconds = 0;
     page = PageStore.getPageFromKey(this.props.page || "/");
     return {
-      page: page
+      page: page,
+      seconds: seconds
     };
   },
+  initTimer: function() {
+    return setInterval(this.updateTick, 1000);
+  },
+  updateTick: function() {
+    return this.setState({
+      seconds: this.state.seconds + 1
+    });
+  },
+  foo: function() {
+    return React.DOM.div(null, "ff", React.DOM.p(null, "nice"));
+  },
   render: function() {
-    var page;
+    var page, seconds;
     page = this.state.page;
+    seconds = this.state.seconds;
     return React.DOM.div(null, React.DOM.a({
       "href": page.link
-    }, React.DOM.h1(null, page.name, " Hu"), React.DOM.img({
+    }, React.DOM.h1(null, page.name), React.DOM.img({
       "src": page.logo
-    })));
+    }), React.DOM.div(null, "Timer"), React.DOM.p(null, seconds), this.foo()));
   }
 });
 
