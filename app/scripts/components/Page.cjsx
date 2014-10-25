@@ -11,6 +11,9 @@ Page = React.createClass(
       12: 850
       15: 1200
       18: 1400
+      21: 1600
+      24: 1900
+      27: 2100
     
     @.initTimer()
     interval = 0
@@ -130,8 +133,8 @@ Page = React.createClass(
     <button className="myButton" onClick={@acomplishTraining}>
       review learned stuff
     </button>
-
   # progressbar:->
+
   #   <div class="progress progress-bar"/></div>
   #   <div id="my-progressbar">
 
@@ -143,21 +146,17 @@ Page = React.createClass(
     hours = @state.hours
     output = @state.output
     <div id="pagebody">
-      <img id="logo" src={page.logo} />
+    <img id="logo" src={page.logo} />
       <img id="logo2" src={page.logo2} />
-        <h1>{page.name}</h1>
-        
-        <h2>{days} days {hours} hours</h2>
-        <div className="progress-wrap progress" data-progress-percent={capacity*2.5}><div className="progress progress-bar"/></div>
-        <h2>points : {xp}</h2>
-        {@.lessonControl()}
-        {@.trainerControl()}
-
-        <div id="userconsole">
+      <h1>{page.name}</h1>
+      <div id="userconsole">
           {output}
-        </div>
-      
-
+      </div>
+       <h2>{days} days {hours} hours</h2>
+      <div className="progress-wrap progress" data-progress-percent={capacity*2.5}><div className="progress progress-bar"/></div>
+      <h2>points : {xp}</h2>
+      {@.lessonControl()}
+      {@.trainerControl()}   
     </div>
 )
 

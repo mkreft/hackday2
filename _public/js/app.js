@@ -128,7 +128,10 @@ Page = React.createClass({
       9: 600,
       12: 850,
       15: 1200,
-      18: 1400
+      18: 1400,
+      21: 1600,
+      24: 1900,
+      27: 2100
     };
     this.initTimer();
     interval = 0;
@@ -283,14 +286,14 @@ Page = React.createClass({
     }), React.DOM.img({
       "id": "logo2",
       "src": page.logo2
-    }), React.DOM.h1(null, page.name), React.DOM.h2(null, days, " days ", hours, " hours"), React.DOM.div({
+    }), React.DOM.h1(null, page.name), React.DOM.div({
+      "id": "userconsole"
+    }, output), React.DOM.h2(null, days, " days ", hours, " hours"), React.DOM.div({
       "className": "progress-wrap progress",
       "data-progress-percent": capacity * 2.5
     }, React.DOM.div({
       "className": "progress progress-bar"
-    })), React.DOM.h2(null, "points : ", xp), this.lessonControl(), this.trainerControl(), React.DOM.div({
-      "id": "userconsole"
-    }, output));
+    })), React.DOM.h2(null, "points : ", xp), this.lessonControl(), this.trainerControl());
   }
 });
 

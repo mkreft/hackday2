@@ -17,7 +17,8 @@ a h1 {
   color: #00d8ff;
 }
 #logo {
-  width: 15%;
+  width: 20%;
+  margin-top: 20px;
   margin-bottom: 40px;
 }
 div#userconsole {
@@ -51,7 +52,7 @@ img {
   cursor: pointer;
   color: #ffffff;
   font-family: arial;
-  font-size: 15px;
+  font-size: 24px;
   font-weight: bold;
   padding: 6px 24px;
   text-decoration: none;
